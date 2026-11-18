@@ -427,12 +427,6 @@ class App(tk.Tk):
         self.path_lbl = ttk.Label(top, text="", foreground="#666")
         self.path_lbl.pack(anchor="w", pady=(4, 0))
 
-        if self.sets:
-            self.combo.current(0)
-            self.on_pick_set()
-        else:
-            self.combo.set("No browsers found automatically - use Browse")
-
         # --- Step 2: check
         mid = ttk.Frame(self, padding=(14, 10, 14, 4))
         mid.pack(fill="x")
@@ -486,6 +480,14 @@ class App(tk.Tk):
         self.count_lbl.pack(side="right", padx=10)
 
         self.all_rows = []
+
+        # Pre-select the first browser found (only now that the whole window exists).
+        if self.sets:
+            self.combo.current(0)
+            self.on_pick_set()
+        else:
+            self.combo.set("No browsers found automatically - use Browse")
+
         self.after(100, self.poll)
 
     # ----- choosing
@@ -736,6 +738,13 @@ def main():
         # Used by the automatic build to check the finished program opens.
         def finish():
             assert app.tree.winfo_exists() and app.scan_btn.winfo_exists()
+            want = int(os.environ.get("BOOKMARK_CLEANER_EXPECT_SETS", "0"))
+            assert len(app.sets) >= want, f"expected {want} bookmark sets, found {len(app.sets)}"
+            for label, path in app.sets:   # every set must load without errors
+                app.set_path(path)
+                n = len(READERS[app.kind](path))
+                assert n > 0, f"{label}: no bookmarks read"
+                print(f"  {label}: {n} bookmarks")
             print("smoke test ok, found", len(app.sets), "bookmark sets")
             app.destroy()
         app.after(2500, finish)

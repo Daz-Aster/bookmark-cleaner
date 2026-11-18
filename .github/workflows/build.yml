@@ -50,10 +50,14 @@ jobs:
             --add-data "bookmark_cleaner.ico${SEP}." \
             bookmark_cleaner_gui.pyw
 
-      - name: Check the program opens
+      - name: Create fake browser bookmarks for testing
+        run: python tests/make_fake_bookmarks.py
+
+      - name: Check the program opens and loads bookmarks
         shell: bash
         env:
           BOOKMARK_CLEANER_SMOKE_TEST: "1"
+          BOOKMARK_CLEANER_EXPECT_SETS: "2"
         run: |
           if [ "$RUNNER_OS" = "Linux" ]; then
             xvfb-run -a "dist/Bookmark Cleaner"
