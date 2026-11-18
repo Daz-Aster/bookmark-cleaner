@@ -104,12 +104,16 @@ jobs:
           merge-multiple: true
       - uses: softprops/action-gh-release@v2
         with:
+          # Keep whatever was written when publishing the release; add download instructions below it.
+          append_body: true
           files: |
             Bookmark-Cleaner-Windows.zip
             Bookmark-Cleaner-Mac-Apple-Silicon.zip
             Bookmark-Cleaner-Mac-Intel.zip
             Bookmark-Cleaner-Linux.tar.gz
           body: |
+
+            ---
             **Download the file for your computer:**
             - Windows: `Bookmark-Cleaner-Windows.zip` - unzip, double-click **Bookmark Cleaner.exe**
             - Mac with M1, M2, M3 or newer: `Bookmark-Cleaner-Mac-Apple-Silicon.zip`
