@@ -731,7 +731,15 @@ def main():
             ctypes.windll.shcore.SetProcessDpiAwareness(1)  # sharp text on high-res screens
         except Exception:
             pass
-    App().mainloop()
+    app = App()
+    if os.environ.get("BOOKMARK_CLEANER_SMOKE_TEST"):
+        # Used by the automatic build to check the finished program opens.
+        def finish():
+            assert app.tree.winfo_exists() and app.scan_btn.winfo_exists()
+            print("smoke test ok, found", len(app.sets), "bookmark sets")
+            app.destroy()
+        app.after(2500, finish)
+    app.mainloop()
 
 
 if __name__ == "__main__":

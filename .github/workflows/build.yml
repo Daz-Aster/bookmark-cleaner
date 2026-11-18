@@ -28,9 +28,9 @@ jobs:
             asset: Bookmark-Cleaner-Linux.tar.gz
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -46,6 +46,23 @@ jobs:
             --icon "${{ matrix.icon }}" \
             --add-data "bookmark_cleaner.ico${SEP}." \
             bookmark_cleaner_gui.pyw
+
+      - name: Check the program opens
+        shell: bash
+        env:
+          BOOKMARK_CLEANER_SMOKE_TEST: "1"
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            xvfb-run -a "dist/Bookmark Cleaner"
+          elif [ "$RUNNER_OS" = "macOS" ]; then
+            "dist/Bookmark Cleaner.app/Contents/MacOS/Bookmark Cleaner"
+          else
+            "dist/Bookmark Cleaner.exe" &
+            PID=$!
+            for i in $(seq 1 30); do sleep 1; kill -0 $PID 2>/dev/null || break; done
+            if kill -0 $PID 2>/dev/null; then echo "app did not close"; kill $PID; exit 1; fi
+            wait $PID
+          fi
 
       - name: Package (Windows)
         if: runner.os == 'Windows'
@@ -65,7 +82,7 @@ jobs:
           chmod +x "pkg/Bookmark Cleaner"
           tar -czf "${{ matrix.asset }}" -C pkg .
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.asset }}
           path: ${{ matrix.asset }}
@@ -75,7 +92,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           merge-multiple: true
       - uses: softprops/action-gh-release@v2
