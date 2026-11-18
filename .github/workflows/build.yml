@@ -1,0 +1,93 @@
+name: Build Bookmark Cleaner
+
+# Builds Windows, macOS and Linux versions every time the code changes.
+# Pushing a tag like v1.0 also publishes them on the Releases page for friends to download.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            icon: bookmark_cleaner.ico
+            asset: Bookmark-Cleaner-Windows.zip
+          - os: macos-latest
+            icon: bookmark_cleaner.png
+            asset: Bookmark-Cleaner-Mac.zip
+          - os: ubuntu-22.04
+            icon: bookmark_cleaner.png
+            asset: Bookmark-Cleaner-Linux.tar.gz
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build tools
+        run: python -m pip install --upgrade pyinstaller pillow
+
+      - name: Build
+        shell: bash
+        run: |
+          SEP=":"; [ "$RUNNER_OS" = "Windows" ] && SEP=";"
+          python -m PyInstaller --noconfirm --clean --onefile --windowed \
+            --name "Bookmark Cleaner" \
+            --icon "${{ matrix.icon }}" \
+            --add-data "bookmark_cleaner.ico${SEP}." \
+            bookmark_cleaner_gui.pyw
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Compress-Archive -Path "dist/Bookmark Cleaner.exe","READ ME FIRST.txt" -DestinationPath "${{ matrix.asset }}"
+
+      - name: Package (Mac)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir pkg && cp -R "dist/Bookmark Cleaner.app" "READ ME FIRST.txt" pkg/
+          ditto -c -k pkg "${{ matrix.asset }}"
+
+      - name: Package (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir pkg && cp "dist/Bookmark Cleaner" "READ ME FIRST.txt" pkg/
+          chmod +x "pkg/Bookmark Cleaner"
+          tar -czf "${{ matrix.asset }}" -C pkg .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.asset }}
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Bookmark-Cleaner-Windows.zip
+            Bookmark-Cleaner-Mac.zip
+            Bookmark-Cleaner-Linux.tar.gz
+          body: |
+            **Download the file for your computer:**
+            - Windows: `Bookmark-Cleaner-Windows.zip` - unzip, double-click **Bookmark Cleaner.exe**
+            - Mac (Apple Silicon M1 or newer): `Bookmark-Cleaner-Mac.zip` - unzip, then right-click **Bookmark Cleaner** and choose **Open** the first time
+            - Linux: `Bookmark-Cleaner-Linux.tar.gz` - extract, double-click **Bookmark Cleaner** (or run it from your file manager)
+
+            See **READ ME FIRST.txt** inside for how to use it.

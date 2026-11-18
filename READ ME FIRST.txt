@@ -1,0 +1,46 @@
+BOOKMARK CLEANER
+Finds and deletes dead links in your bookmarks.
+Works with Chrome, Edge, Brave, Vivaldi, Opera, Firefox, and exported bookmark .html files.
+
+
+OPENING IT
+
+Windows: Double-click "Bookmark Cleaner.exe".
+         If Windows says "Windows protected your PC", click "More info",
+         then "Run anyway". This only happens the first time.
+
+Mac:     The first time, RIGHT-click "Bookmark Cleaner" and choose "Open",
+         then click "Open" again. (Double-clicking the first time gives a
+         warning because the app isn't registered with Apple.)
+         If it still refuses: System Settings > Privacy & Security, scroll
+         down, and click "Open Anyway".
+
+Linux:   Double-click "Bookmark Cleaner". If nothing happens, right-click it,
+         open Properties, and allow it to run as a program.
+
+
+USING IT
+
+1. Pick your browser from the list, or click "Browse for a file" to choose
+   an exported bookmarks .html file.
+2. Click "Check links". Large collections can take a few minutes.
+3. Review the list:
+     Dead   = the page or website is gone. Ticked for deletion automatically.
+     Unsure = the site blocked the check, was slow, or had a temporary error.
+              These usually still work, so they're NOT ticked.
+              Double-click a row to open the link and see for yourself.
+   Click the box in the Delete column to tick or untick a link.
+4. CLOSE YOUR BROWSER completely, then click "Delete ticked bookmarks".
+   A backup copy of your bookmarks is saved first.
+
+
+GOOD TO KNOW
+
+- If you sync bookmarks across devices (signed in to Chrome/Edge/Firefox),
+  turn bookmark sync off before deleting, or the links may come back from
+  your other devices. Turn it back on afterwards.
+- Browsers can keep running in the background after you close the window.
+  On Windows check the icons near the clock; on a Mac use Quit from the menu.
+- To undo a clean-up: close the browser, go to the folder shown in the final
+  message, delete the bookmarks file, and rename the ".backup-..." file to the
+  original name.
