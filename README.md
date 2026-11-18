@@ -13,8 +13,12 @@ Go to the **[Releases](../../releases/latest)** page and download the file for y
 | Computer | File |
 |---|---|
 | Windows | `Bookmark-Cleaner-Windows.zip` |
-| Mac (M1 or newer) | `Bookmark-Cleaner-Mac.zip` |
+| Mac with M1 chip or newer | `Bookmark-Cleaner-Mac-Apple-Silicon.zip` |
+| Older Mac with Intel processor | `Bookmark-Cleaner-Mac-Intel.zip` |
 | Linux | `Bookmark-Cleaner-Linux.tar.gz` |
+
+Not sure which Mac you have? Apple menu > **About This Mac**: "Chip: Apple M…" means Apple Silicon,
+"Processor: Intel" means Intel.
 
 Unzip it and open **Bookmark Cleaner**. `READ ME FIRST.txt` inside explains everything.
 
